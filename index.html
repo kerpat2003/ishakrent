@@ -10,6 +10,12 @@
     <style>
         :root {
             --brand-yellow: #FFD700;
+            --day-top: #87CEEB;
+            --day-bottom: #4facfe;
+            --night-top: #0d1a2f;
+            --night-bottom: #02040a;
+            --sky-top: var(--day-top);
+            --sky-bottom: var(--day-bottom);
         }
 
         html {
@@ -20,7 +26,8 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            background: linear-gradient(to bottom, #87CEEB 0%, #4facfe 100%);
+            background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 100%);
+            transition: background 1s linear;
         }
 
         #background-container {
@@ -78,11 +85,13 @@
             width: 80px; height: 80px; background-color: #EAEAEA;
             box-shadow: 0 0 60px 10px #EAEAEA, inset 5px -5px 10px #00000033;
             opacity: 0;
+            animation: spin 80s linear infinite, moonGlow 6s ease-in-out infinite;
         }
         #sun {
             width: 100px; height: 100px; background-color: #FFD700;
             box-shadow: 0 0 60px 20px #FFD700;
             opacity: 0;
+            animation: spin 40s linear infinite, sunGlow 4s ease-in-out infinite;
         }
 
         #clouds-container {
@@ -95,13 +104,17 @@
             position: absolute; top: 20%; left: -200px;
             width: 200px; height: auto;
             opacity: 0.8;
-            animation: moveClouds 60s linear infinite;
+            animation: cloudDrift 60s linear infinite, cloudFloat 12s ease-in-out infinite;
         }
-        .cloud:nth-child(2) { top: 40%; animation-duration: 80s; }
-        .cloud:nth-child(3) { top: 60%; animation-duration: 100s; }
-        @keyframes moveClouds {
-            from { transform: translateX(-200px); }
-            to { transform: translateX(110vw); }
+        .cloud:nth-child(2) { top: 40%; animation-duration: 80s, 14s; }
+        .cloud:nth-child(3) { top: 60%; animation-duration: 100s, 16s; }
+        @keyframes cloudDrift {
+            from { left: -200px; }
+            to { left: 110vw; }
+        }
+        @keyframes cloudFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         #stars-container {
@@ -115,6 +128,10 @@
             position: absolute; background: white; border-radius: 50%;
             animation: twinkle 3s ease-in-out infinite;
         }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes sunGlow { 0%, 100% { box-shadow: 0 0 60px 20px #FFD700; } 50% { box-shadow: 0 0 80px 30px #FFD700; } }
+        @keyframes moonGlow { 0%, 100% { box-shadow: 0 0 60px 10px #EAEAEA, inset 5px -5px 10px #00000033; } 50% { box-shadow: 0 0 80px 20px #EAEAEA, inset 5px -5px 10px #00000033; } }
         
         #content {
             font-family: 'Russo One', sans-serif; position: relative;
@@ -287,20 +304,20 @@
         <div class="section is-visible" id="intro">
             <video id="intro-video" src="Whisk_dg0zdg2ntq (online-video-cutter.com).mp4" autoplay muted loop playsinline></video>
             <h1>ISHAKBIKE</h1>
-            <p>Сдаем электровелосипеды <strong>Monster Wenbox 2025</strong> - только новый парк!</p>
+            <p>Сдаем в аренду электровелосипеды <strong>Monster Wenbox 2025</strong> — весь парк абсолютно новый!</p>
             <div class="service-info">
-                <h3>Обслуживание с нас</h3>
+                <h3>Сервис и поддержка</h3>
                 <ul>
-                    <li>чиним бесплатно естественный износ</li>
-                    <li>поломки при авариях и падениях чиним по закупочной цене деталей, без стоимости работы мастера</li>
-                    <li>гарантия 30 дней на электронику</li>
-                    <li>замена байка в случае поломки</li>
+                    <li>бесплатно обслуживаем естественный износ</li>
+                    <li>ремонтируем повреждения по себестоимости деталей, без оплаты труда</li>
+                    <li>30 дней гарантии на электронику</li>
+                    <li>при поломке выдаем другой байк</li>
                 </ul>
             </div>
         </div>
 
         <div class="section" id="bike-photo">
-            <h2>Наш Флагман</h2>
+            <h2>Флагманский байк</h2>
             <img src="electro1.png" alt="Электровелосипед Monster Wenbox 2025" class="bike-image">
             <h3>🎁 Комплектация:</h3>
             <ul>
@@ -309,7 +326,7 @@
                 <li>Держатель для телефона и зеркала</li>
                 <li>Сигнализация, защита от влаги</li>
             </ul>
-            <p><strong>Monster Wenbox</strong> развивает скорость <strong>60 км/ч</strong>, чтобы точно успеть забрать большие кэфы.</p>
+            <p><strong>Monster Wenbox</strong> разгоняется до <strong>60 км/ч</strong>, чтобы ты успевал забирать самые выгодные заказы.</p>
         </div>
         
         <div class="section" id="rental">
@@ -322,7 +339,22 @@
             </div>
         </div>
 
-        <div class="section" id="buyout"><h2>Выкуп (Рассрочка)</h2><p>Доставим и соберем новый Monster Wenbox W-21. В комплекте багажник, корзинка, держатель для телефона с зарядкой и документы.</p><div class="price-grid"><div><h3>Monster + 1 АКБ</h3><p>3 месяца: <span class="highlight">620₽/день</span></p><p>4 месяца: <span class="highlight">520₽/день</span></p></div><div><h3>Monster + 2 АКБ</h3><p>3 месяца: <span class="highlight">920₽/день</span></p><p>4 месяца: <span class="highlight">790₽/день</span></p></div></div></div>
+        <div class="section" id="buyout">
+            <h2>Выкуп в рассрочку</h2>
+            <p>Привезём и соберём новый Monster Wenbox W-21. В комплекте багажник, корзина, держатель телефона с зарядкой и документы.</p>
+            <div class="price-grid">
+                <div>
+                    <h3>Monster + 1 АКБ</h3>
+                    <p>3 месяца: <span class="highlight">620₽/день</span></p>
+                    <p>4 месяца: <span class="highlight">520₽/день</span></p>
+                </div>
+                <div>
+                    <h3>Monster + 2 АКБ</h3>
+                    <p>3 месяца: <span class="highlight">920₽/день</span></p>
+                    <p>4 месяца: <span class="highlight">790₽/день</span></p>
+                </div>
+            </div>
+        </div>
         
         <div class="section" id="specs"><h2>Характеристики</h2><ul>
             <li><strong>Мощность:</strong> 1000 Ватт (маркировка 240 Вт)</li>
@@ -336,9 +368,9 @@
         <div class="section" id="contact">
             <h2>Как получить вел?</h2>
             <ul style="text-align: center;">
-                <li>Напишите <span class="highlight">«АРЕНДА»</span> в Telegram.</li>
-                <li>Возьмите паспорт и приезжайте к нам в мастерскую.</li>
-                <li>Подписываем договор и можно ехать!</li>
+                <li>Напишите нам в Telegram слово <span class="highlight">«АРЕНДА»</span>.</li>
+                <li>Возьмите паспорт и приезжайте в мастерскую.</li>
+                <li>Подписываем договор — и можно ехать!</li>
             </ul>
             <p style="font-size: 1.5em; margin-top: 1em;"><a href="https://t.me/ishakrent" target="_blank">@ishakrent</a></p>
         </div>
@@ -357,6 +389,7 @@
         const moon = document.getElementById('moon');
         const starsContainer = document.getElementById('stars-container');
         const ishakFly = document.getElementById('ishak-fly');
+        const rootStyle = document.documentElement.style;
 
         const STAR_COUNT = 200;
         for (let i = 0; i < STAR_COUNT; i++) {
@@ -375,6 +408,18 @@
         const cloudsContainer = document.getElementById('clouds-container');
         const CYCLE_DURATION = 60000; // полный цикл день/ночь в мс
 
+        const dayTop = [135,206,235];
+        const dayBottom = [79,172,254];
+        const nightTop = [13,26,47];
+        const nightBottom = [2,4,10];
+
+        function setSkyColor(t) {
+            const top = dayTop.map((d,i)=>Math.round(d + (nightTop[i]-d)*t));
+            const bottom = dayBottom.map((d,i)=>Math.round(d + (nightBottom[i]-d)*t));
+            rootStyle.setProperty('--sky-top', `rgb(${top.join(',')})`);
+            rootStyle.setProperty('--sky-bottom', `rgb(${bottom.join(',')})`);
+        }
+
         function updateScene() {
             const now = Date.now();
             const cyclePos = (now % CYCLE_DURATION) / CYCLE_DURATION; // 0..1
@@ -387,6 +432,7 @@
                 moon.style.opacity = 0;
                 starsContainer.style.opacity = 0;
                 cloudsContainer.style.opacity = 1 - p;
+                setSkyColor(p);
             } else {
                 const p = (cyclePos - 0.5) / 0.5; // ночь -> день
                 nightOverlay.style.opacity = 1 - p;
@@ -398,6 +444,7 @@
                 sun.style.left = (10 + p * 80) + 'vw';
                 sun.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
                 cloudsContainer.style.opacity = p;
+                setSkyColor(1 - p);
             }
 
             const flight = cyclePos;
@@ -415,13 +462,13 @@
         const sections = document.querySelectorAll('.section');
 
         const donkeyDialogs = {
-            'intro': { text: 'Привет! Изучи наши условия обслуживания. Мы заботимся о твоем комфорте!', position: 'right', delay: 200 },
-            'bike-photo': { text: 'Вот он, наш флагман! Полностью укомплектован и готов к работе, чтобы забирать самые большие кэфы!', position: 'left', delay: 400 },
-            'rental': { text: 'Вот наши тарифы. Обратите внимание, что при аренде от двух недель залог не нужен!', position: 'right', delay: 400 },
-            'buyout': { text: 'А если хотите свой собственный вел — можно оформить выкуп в рассрочку. Это выгодно!', position: 'left', delay: 400 },
-            'specs': { text: 'Наши байки мощные и быстрые, но полностью легальны для дорог. Безопасность — это главное!', position: 'right', delay: 400 },
-            'address': { text: 'Забрать своего железного коня можно в одном из двух наших офисов. Выбирайте, где удобнее!', position: 'left', delay: 400 },
-            'contact': { text: 'Всего три простых шага, и велик ваш! Напишите нам в Telegram!', position: 'right', delay: 400 }
+            'intro': { text: 'Добро пожаловать! Ознакомься с сервисом — мы всё сделали для твоего комфорта.', position: 'right', delay: 200 },
+            'bike-photo': { text: 'Наш главный байк уже укомплектован и ждёт твоих заказов!', position: 'left', delay: 400 },
+            'rental': { text: 'Вот тарифы. Аренда от двух недель — без залога.', position: 'right', delay: 400 },
+            'buyout': { text: 'Хочешь личный вел? Рассрочка поможет взять свой Monster.', position: 'left', delay: 400 },
+            'specs': { text: 'Мощные и быстрые, но полностью легальные. Безопасность прежде всего!', position: 'right', delay: 400 },
+            'address': { text: 'Забирай железного коня на Аэропорте или Савёловской — где ближе.', position: 'left', delay: 400 },
+            'contact': { text: 'Три шага до дороги: напиши в Telegram и приезжай!', position: 'right', delay: 400 }
         };
 
         let currentSectionId = null;
