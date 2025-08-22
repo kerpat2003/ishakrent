@@ -12,11 +12,15 @@
             --brand-yellow: #FFD700;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            background: #87CEEB;
+            background: linear-gradient(to bottom, #87CEEB 0%, #4facfe 100%);
         }
 
         #background-container {
@@ -48,6 +52,24 @@
             transition: opacity 0.5s ease;
         }
 
+        #site-header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+        }
+        #site-header nav {
+            display: flex; gap: 20px; padding: 10px 20px;
+        }
+        #site-header a {
+            color: white; text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        #site-header a:hover {
+            color: var(--brand-yellow);
+        }
+
         .celestial-body {
             position: absolute; border-radius: 50%;
             transition: opacity 1.5s ease, top 0.1s linear, left 0.1s linear;
@@ -73,8 +95,8 @@
         #content {
             font-family: 'Russo One', sans-serif; position: relative;
             z-index: 1; color: white; text-align: center;
-            padding: 10vh 5vw;
-            text-shadow: 
+            padding: calc(10vh + 60px) 5vw 10vh;
+            text-shadow:
                 -2px -2px 0 #000, 2px -2px 0 #000,
                 -2px 2px 0 #000, 2px 2px 0 #000;
         }
@@ -86,6 +108,10 @@
             transform: translateY(50px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
             display: flex; flex-direction: column; align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .section.is-visible { opacity: 1; transform: translateY(0); }
         .section:last-child { margin-bottom: 20vh; }
@@ -115,7 +141,8 @@
         .price-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; margin-top: 1em; }
         .price-card { padding: 15px; min-width: 200px; }
         strong, .highlight { color: var(--brand-yellow); }
-        a { color: var(--brand-yellow); text-decoration: none; }
+        a { color: var(--brand-yellow); text-decoration: none; transition: color 0.3s ease; }
+        a:hover { color: white; }
 
         .service-info {
             margin-top: 40px;
@@ -194,6 +221,8 @@
             #content {
                 padding-bottom: 200px;
             }
+            #site-header nav { flex-wrap: wrap; gap: 10px; }
+            #site-header a { font-size: 0.9em; padding: 5px 0; }
 
             .donkey-assistant { bottom: 10px; }
             .donkey-right { right: 10px; }
@@ -206,8 +235,17 @@
         }
     </style>
 </head>
-<body>
-    <div id="background-container"></div>
+    <body>
+        <header id="site-header">
+            <nav>
+                <a href="#intro">Главная</a>
+                <a href="#rental">Аренда</a>
+                <a href="#buyout">Выкуп</a>
+                <a href="#specs">Характеристики</a>
+                <a href="#contact">Контакты</a>
+            </nav>
+        </header>
+        <div id="background-container"></div>
     <div id="night-overlay"></div>
     <div id="sky-elements">
         <img src="ishakfly1.png" id="ishak-fly" alt="Летающий ишак">
