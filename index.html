@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISHAKrent - Аренда и Выкуп Электровелосипедов</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-yellow: #FFD700;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: #87CEEB;
+        }
+
+        #background-container {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background-image: url('Whisk_bedc3e7abd.jpg');
+            background-size: cover;
+            background-position: center bottom;
+            z-index: -2;
+        }
+        
+        #night-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background: linear-gradient(to bottom, #0d1a2f, #02040a);
+            opacity: 1; z-index: -1;
+        }
+
+        #sky-elements {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100vh;
+            z-index: 0; pointer-events: none;
+        }
+        
+        #ishak-fly {
+            position: fixed; width: 300px;
+            height: auto; z-index: 0; opacity: 0;
+            transform: scaleX(-1) rotate(-10deg);
+            transition: opacity 0.5s ease;
+        }
+
+        .celestial-body {
+            position: absolute; border-radius: 50%;
+            transition: opacity 1.5s ease, top 0.1s linear, left 0.1s linear;
+        }
+        #moon {
+            width: 80px; height: 80px; background-color: #EAEAEA;
+            box-shadow: 0 0 60px 10px #EAEAEA, inset 5px -5px 10px #00000033;
+            opacity: 0;
+        }
+        
+        #stars-container {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0; transition: opacity 1.5s ease;
+        }
+        
+        @keyframes twinkle { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        
+        #content {
+            font-family: 'Russo One', sans-serif; position: relative;
+            z-index: 1; color: white; text-align: center;
+            padding: 10vh 5vw;
+            text-shadow: 
+                -2px -2px 0 #000, 2px -2px 0 #000,
+                -2px 2px 0 #000, 2px 2px 0 #000;
+        }
+        
+        .section {
+            box-sizing: border-box;
+            padding: 25px 35px; margin: 0 auto 80vh auto;
+            max-width: 750px; opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .section.is-visible { opacity: 1; transform: translateY(0); }
+        .section:last-child { margin-bottom: 20vh; }
+        
+        #intro-video {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bike-image {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 { font-size: clamp(3em, 8vw, 5em); color: var(--brand-yellow); margin: 0; }
+        h2 { font-size: clamp(2em, 6vw, 3em); color: white; margin-top: 0; margin-bottom: 0.5em; }
+        h3 { font-size: clamp(1.4em, 4vw, 1.7em); color: var(--brand-yellow); margin-top: 1.5em; }
+        p, li { font-size: clamp(1.1em, 2.5vw, 1.3em); line-height: 1.6; }
+        ul { list-style: none; padding: 0; text-align: left; display: inline-block; }
+        li { margin-bottom: 0.7em; }
+        .price-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; margin-top: 1em; }
+        .price-card { padding: 15px; min-width: 200px; }
+        strong, .highlight { color: var(--brand-yellow); }
+        a { color: var(--brand-yellow); text-decoration: none; }
+
+        .service-info {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.25);
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .service-info h3 {
+            color: #a7f5b5;
+            margin-top: 0;
+            font-size: clamp(1.5em, 4vw, 2em);
+        }
+        .service-info ul {
+            text-align: left;
+            padding-left: 0;
+        }
+        .service-info li {
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .service-info li::before {
+            content: '▶';
+            color: var(--brand-yellow);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.8em;
+        }
+        
+        .donkey-assistant {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            z-index: 100;
+            transition: left 0.8s ease-in-out, right 0.8s ease-in-out;
+        }
+        .donkey-assistant img {
+            width: 250px; height: auto;
+            transition: transform 0.8s ease-in-out;
+        }
+        
+        .donkey-right { right: 20px; left: auto; flex-direction: row; }
+        .donkey-right img { transform: scaleX(1); }
+        .donkey-right .speech-bubble { margin-right: -20px; }
+        .donkey-right .speech-bubble::after { right: 35px; left: auto; }
+
+        .donkey-left { left: 20px; right: auto; flex-direction: row-reverse; }
+        .donkey-left img { transform: scaleX(-1); }
+        .donkey-left .speech-bubble { margin-left: -20px; margin-right: 0; }
+        .donkey-left .speech-bubble::after { left: 35px; right: auto; }
+
+        .speech-bubble {
+            background-color: #ffffff; color: #333333;
+            font-family: 'Russo One', sans-serif;
+            padding: 15px 20px; border-radius: 15px;
+            margin-bottom: 140px; max-width: 240px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            position: relative; text-shadow: none;
+        }
+        .speech-bubble p { margin: 0; font-size: 1em; transition: opacity 0.3s ease-out; }
+        
+        .speech-bubble::after {
+            content: ''; position: absolute;
+            bottom: -10px; border-width: 10px;
+            border-style: solid;
+            border-color: #ffffff transparent transparent transparent;
+        }
+        
+        @media (max-width: 600px) {
+            /* ИСПРАВЛЕНО: Добавляем отступ снизу, чтобы текст не заезжал под ослика */
+            #content {
+                padding-bottom: 200px;
+            }
+
+            .donkey-assistant { bottom: 10px; }
+            .donkey-right { right: 10px; }
+            .donkey-left { left: 10px; }
+            .donkey-assistant img { width: 150px; }
+            .speech-bubble { margin-bottom: 80px; max-width: 190px; padding: 12px 15px; }
+            .speech-bubble p { font-size: 0.9em; }
+
+            .section { max-width: 90%; padding-left: 15px; padding-right: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="background-container"></div>
+    <div id="night-overlay"></div>
+    <div id="sky-elements">
+        <img src="ishakfly1.png" id="ishak-fly" alt="Летающий ишак">
+        <div id="stars-container"></div>
+        <div id="moon" class="celestial-body"></div>
+    </div>
+
+    <div id="content">
+        <div class="section is-visible" id="intro">
+            <video id="intro-video" src="Whisk_dg0zdg2ntq (online-video-cutter.com).mp4" autoplay muted loop playsinline></video>
+            <h1>ISHAKBIKE</h1>
+            <p>Сдаем электровелосипеды <strong>Monster Wenbox 2025</strong> - только новый парк!</p>
+            <div class="service-info">
+                <h3>Обслуживание с нас</h3>
+                <ul>
+                    <li>чиним бесплатно естественный износ</li>
+                    <li>поломки при авариях и падениях чиним по закупочной цене деталей, без стоимости работы мастера</li>
+                    <li>гарантия 30 дней на электронику</li>
+                    <li>замена байка в случае поломки</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="bike-photo">
+            <h2>Наш Флагман</h2>
+            <img src="electro1.png" alt="Электровелосипед Monster Wenbox 2025" class="bike-image">
+            <h3>🎁 Комплектация:</h3>
+            <ul>
+                <li>2 АКБ с запасом хода ~90км</li>
+                <li>Багажник для термокороба</li>
+                <li>Держатель для телефона и зеркала</li>
+                <li>Сигнализация, защита от влаги</li>
+            </ul>
+            <p><strong>Monster Wenbox</strong> развивает скорость <strong>60 км/ч</strong>, чтобы точно успеть забрать большие кэфы.</p>
+        </div>
+        
+        <div class="section" id="rental">
+            <h2>Тарифы на аренду</h2>
+            <p class="highlight">Без залога при аренде от 2-х недель!</p>
+            <div class="price-grid">
+                <div class="price-card"><h3>1 неделя</h3><p>4000₽ + <span class="highlight">залог 5000₽</span></p></div>
+                <div class="price-card"><h3>2 недели</h3><p class="highlight">7500₽</p></div>
+                <div class="price-card"><h3>1 месяц</h3><p class="highlight">14500₽</p><p>(~483₽ в день)</p></div>
+            </div>
+        </div>
+
+        <div class="section" id="buyout"><h2>Выкуп (Рассрочка)</h2><p>Доставим и соберем новый Monster Wenbox W-21. В комплекте багажник, корзинка, держатель для телефона с зарядкой и документы.</p><div class="price-grid"><div><h3>Monster + 1 АКБ</h3><p>3 месяца: <span class="highlight">620₽/день</span></p><p>4 месяца: <span class="highlight">520₽/день</span></p></div><div><h3>Monster + 2 АКБ</h3><p>3 месяца: <span class="highlight">920₽/день</span></p><p>4 месяца: <span class="highlight">790₽/день</span></p></div></div></div>
+        
+        <div class="section" id="specs"><h2>Характеристики</h2><ul>
+            <li><strong>Мощность:</strong> 1000 Ватт (маркировка 240 Вт)</li>
+            <li><strong>Скорость:</strong> 60 км/ч</li>
+            <li><strong>Запас хода:</strong> ~90 км</li>
+            <li><strong>Документы:</strong> Полный комплект (паспорт, договор аренды)</li>
+        </ul></div>
+        
+        <div class="section" id="address"><h2>Наши адреса</h2><div class="price-grid"><div><h3>м. Аэропорт</h3><p>Ул. Часовая 16с19</p></div><div><h3>м. Савеловская</h3><p>Ул. Бутырская 53к1</p></div></div></div>
+        
+        <div class="section" id="contact">
+            <h2>Как получить вел?</h2>
+            <ul style="text-align: center;">
+                <li>Напишите <span class="highlight">«АРЕНДА»</span> в Telegram.</li>
+                <li>Возьмите паспорт и приезжайте к нам в мастерскую.</li>
+                <li>Подписываем договор и можно ехать!</li>
+            </ul>
+            <p style="font-size: 1.5em; margin-top: 1em;"><a href="https://t.me/ishakrent" target="_blank">@ishakrent</a></p>
+        </div>
+    </div>
+
+    <div class="donkey-assistant" id="donkey-assistant">
+        <div class="speech-bubble">
+            <p id="donkey-text"></p>
+        </div>
+        <img src="Whisk_12455d7cfa-Photoroom.png" alt="Машущий ослик-помощник">
+    </div>
+
+    <script>
+        // --- Скрипт для анимации фона ---
+        const nightOverlay = document.getElementById('night-overlay');
+        const moon = document.getElementById('moon');
+        const starsContainer = document.getElementById('stars-container');
+        const ishakFly = document.getElementById('ishak-fly');
+
+        const STAR_COUNT = 200;
+        for (let i = 0; i < STAR_COUNT; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 2 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            star.style.animationDuration = 3 + Math.random() * 4 + 's';
+            starsContainer.appendChild(star);
+        }
+        
+        function animateScene() {
+            const scrollTotal = document.body.scrollHeight - window.innerHeight;
+            if (scrollTotal <= 0) return;
+            const scrollPercent = Math.min(window.scrollY / scrollTotal, 1.0);
+            nightOverlay.style.opacity = 1 - scrollPercent;
+            const angle = (1 - scrollPercent) * Math.PI;
+            const moonX = 50 - Math.cos(angle) * 60;
+            const moonY = 80 - Math.sin(angle) * 70;
+            moon.style.left = `${moonX}vw`; 
+            moon.style.top = `${moonY}vh`;
+            moon.style.opacity = Math.max(0, 1 - (scrollPercent / 0.5));
+            starsContainer.style.opacity = Math.max(0, 1 - (scrollPercent / 0.4));
+            
+            ishakFly.style.left = (-20 + scrollPercent * 140) + 'vw';
+            ishakFly.style.top = (20 + Math.sin(scrollPercent * Math.PI * 2) * 5) + 'vh';
+            ishakFly.style.opacity = Math.max(0, (scrollPercent - 0.3) / 0.7);
+        }
+        window.addEventListener('scroll', animateScene);
+        
+        // --- Скрипт для интерактивного ослика-гида ---
+        const donkeyAssistant = document.getElementById('donkey-assistant');
+        const donkeyText = document.getElementById('donkey-text');
+        const sections = document.querySelectorAll('.section');
+
+        const donkeyDialogs = {
+            'intro': { text: 'Привет! Изучи наши условия обслуживания. Мы заботимся о твоем комфорте!', position: 'right', delay: 200 },
+            'bike-photo': { text: 'Вот он, наш флагман! Полностью укомплектован и готов к работе, чтобы забирать самые большие кэфы!', position: 'left', delay: 400 },
+            'rental': { text: 'Вот наши тарифы. Обратите внимание, что при аренде от двух недель залог не нужен!', position: 'right', delay: 400 },
+            'buyout': { text: 'А если хотите свой собственный вел — можно оформить выкуп в рассрочку. Это выгодно!', position: 'left', delay: 400 },
+            'specs': { text: 'Наши байки мощные и быстрые, но полностью легальны для дорог. Безопасность — это главное!', position: 'right', delay: 400 },
+            'address': { text: 'Забрать своего железного коня можно в одном из двух наших офисов. Выбирайте, где удобнее!', position: 'left', delay: 400 },
+            'contact': { text: 'Всего три простых шага, и велик ваш! Напишите нам в Telegram!', position: 'right', delay: 400 }
+        };
+
+        let currentSectionId = null;
+        let textChangeTimeout;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                if (entry.isIntersecting && id !== currentSectionId) {
+                    currentSectionId = id;
+                    const config = donkeyDialogs[id];
+                    
+                    if (config) {
+                        donkeyAssistant.classList.remove('donkey-left', 'donkey-right');
+                        donkeyAssistant.classList.add(config.position === 'left' ? 'donkey-left' : 'donkey-right');
+
+                        clearTimeout(textChangeTimeout);
+                        donkeyText.style.opacity = '0';
+                        textChangeTimeout = setTimeout(() => {
+                            donkeyText.innerText = config.text;
+                            donkeyText.style.opacity = '1';
+                        }, config.delay);
+                    }
+                }
+            });
+        }, { rootMargin: '0px', threshold: 0.6 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+            if (!section.classList.contains('is-visible')) {
+                const sectionObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            sectionObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                sectionObserver.observe(section);
+            }
+        });
+
+        animateScene();
+        const initialConfig = donkeyDialogs['intro'];
+        donkeyAssistant.classList.add(initialConfig.position === 'left' ? 'donkey-left' : 'donkey-right');
+        donkeyText.innerText = initialConfig.text;
+    </script>
+</body>
+</html>

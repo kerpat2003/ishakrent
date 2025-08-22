@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Mariupol-Bold';
+    src: url('../fonts/Mariupol-Bold.woff2') format('woff2'), /* Укажите правильный путь и имя файла */
+         url('../fonts/Mariupol-Bold.ttf') format('truetype'); /* Укажите правильный путь и имя файла */
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Arial', sans-serif; /* Резервный шрифт */
+}
+
+.font-mariupol {
+    font-family: 'Mariupol-Bold', sans-serif;
+}
