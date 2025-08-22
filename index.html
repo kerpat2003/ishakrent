@@ -79,7 +79,31 @@
             box-shadow: 0 0 60px 10px #EAEAEA, inset 5px -5px 10px #00000033;
             opacity: 0;
         }
-        
+        #sun {
+            width: 100px; height: 100px; background-color: #FFD700;
+            box-shadow: 0 0 60px 20px #FFD700;
+            opacity: 0;
+        }
+
+        #clouds-container {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 1; transition: opacity 1.5s ease;
+        }
+        .cloud {
+            position: absolute; top: 20%; left: -200px;
+            width: 200px; height: auto;
+            opacity: 0.8;
+            animation: moveClouds 60s linear infinite;
+        }
+        .cloud:nth-child(2) { top: 40%; animation-duration: 80s; }
+        .cloud:nth-child(3) { top: 60%; animation-duration: 100s; }
+        @keyframes moveClouds {
+            from { transform: translateX(-200px); }
+            to { transform: translateX(110vw); }
+        }
+
         #stars-container {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -248,9 +272,15 @@
         <div id="background-container"></div>
     <div id="night-overlay"></div>
     <div id="sky-elements">
-        <img src="ishakfly1.png" id="ishak-fly" alt="Летающий ишак">
+        <div id="clouds-container">
+            <img src="cloud1.png" class="cloud" alt="Облако 1">
+            <img src="cloud2.png" class="cloud" alt="Облако 2">
+            <img src="cloud3.png" class="cloud" alt="Облако 3">
+        </div>
         <div id="stars-container"></div>
+        <div id="sun" class="celestial-body"></div>
         <div id="moon" class="celestial-body"></div>
+        <img src="ishakfly1.png" id="ishak-fly" alt="Летающий ишак">
     </div>
 
     <div id="content">
@@ -341,24 +371,43 @@
             starsContainer.appendChild(star);
         }
         
-        function animateScene() {
-            const scrollTotal = document.body.scrollHeight - window.innerHeight;
-            if (scrollTotal <= 0) return;
-            const scrollPercent = Math.min(window.scrollY / scrollTotal, 1.0);
-            nightOverlay.style.opacity = 1 - scrollPercent;
-            const angle = (1 - scrollPercent) * Math.PI;
-            const moonX = 50 - Math.cos(angle) * 60;
-            const moonY = 80 - Math.sin(angle) * 70;
-            moon.style.left = `${moonX}vw`; 
-            moon.style.top = `${moonY}vh`;
-            moon.style.opacity = Math.max(0, 1 - (scrollPercent / 0.5));
-            starsContainer.style.opacity = Math.max(0, 1 - (scrollPercent / 0.4));
-            
-            ishakFly.style.left = (-20 + scrollPercent * 140) + 'vw';
-            ishakFly.style.top = (20 + Math.sin(scrollPercent * Math.PI * 2) * 5) + 'vh';
-            ishakFly.style.opacity = Math.max(0, (scrollPercent - 0.3) / 0.7);
+        const sun = document.getElementById('sun');
+        const cloudsContainer = document.getElementById('clouds-container');
+        const CYCLE_DURATION = 60000; // полный цикл день/ночь в мс
+
+        function updateScene() {
+            const now = Date.now();
+            const cyclePos = (now % CYCLE_DURATION) / CYCLE_DURATION; // 0..1
+            if (cyclePos < 0.5) {
+                const p = cyclePos / 0.5; // день -> ночь
+                nightOverlay.style.opacity = p;
+                sun.style.opacity = 1 - p;
+                sun.style.left = (10 + p * 80) + 'vw';
+                sun.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
+                moon.style.opacity = 0;
+                starsContainer.style.opacity = 0;
+                cloudsContainer.style.opacity = 1 - p;
+            } else {
+                const p = (cyclePos - 0.5) / 0.5; // ночь -> день
+                nightOverlay.style.opacity = 1 - p;
+                moon.style.opacity = 1 - p;
+                moon.style.left = (10 + p * 80) + 'vw';
+                moon.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
+                starsContainer.style.opacity = 1 - p;
+                sun.style.opacity = p;
+                sun.style.left = (10 + p * 80) + 'vw';
+                sun.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
+                cloudsContainer.style.opacity = p;
+            }
+
+            const flight = cyclePos;
+            ishakFly.style.left = (-20 + flight * 140) + 'vw';
+            ishakFly.style.top = (20 + Math.sin(flight * Math.PI * 2) * 5) + 'vh';
+            ishakFly.style.opacity = 0.8;
+
+            requestAnimationFrame(updateScene);
         }
-        window.addEventListener('scroll', animateScene);
+        updateScene();
         
         // --- Скрипт для интерактивного ослика-гида ---
         const donkeyAssistant = document.getElementById('donkey-assistant');
@@ -415,7 +464,6 @@
             }
         });
 
-        animateScene();
         const initialConfig = donkeyDialogs['intro'];
         donkeyAssistant.classList.add(initialConfig.position === 'left' ? 'donkey-left' : 'donkey-right');
         donkeyText.innerText = initialConfig.text;
