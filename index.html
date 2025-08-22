@@ -18,6 +18,20 @@
             overflow-x: hidden;
             background: #87CEEB;
         }
+        :root {
+            --brand-yellow: #FFD700;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: linear-gradient(to bottom, #87CEEB 0%, #4facfe 100%);
+        }
 
         #background-container {
             position: fixed; top: 0; left: 0;
@@ -47,6 +61,30 @@
             transform: scaleX(-1) rotate(-10deg);
             transition: opacity 0.5s ease;
         }
+        #ishak-fly {
+            position: fixed; width: 300px;
+            height: auto; z-index: 0; opacity: 0;
+            transform: scaleX(-1) rotate(-10deg);
+            transition: opacity 0.5s ease;
+        }
+
+        #site-header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+        }
+        #site-header nav {
+            display: flex; gap: 20px; padding: 10px 20px;
+        }
+        #site-header a {
+            color: white; text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        #site-header a:hover {
+            color: var(--brand-yellow);
+        }
 
         .celestial-body {
             position: absolute; border-radius: 50%;
@@ -62,6 +100,44 @@
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             opacity: 0; transition: opacity 1.5s ease;
+        .celestial-body {
+            position: absolute; border-radius: 50%;
+            transition: opacity 1.5s ease, top 0.1s linear, left 0.1s linear;
+        }
+        #moon {
+            width: 80px; height: 80px; background-color: #EAEAEA;
+            box-shadow: 0 0 60px 10px #EAEAEA, inset 5px -5px 10px #00000033;
+            opacity: 0;
+        }
+        #sun {
+            width: 100px; height: 100px; background-color: #FFD700;
+            box-shadow: 0 0 60px 20px #FFD700;
+            opacity: 0;
+        }
+
+        #clouds-container {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 1; transition: opacity 1.5s ease;
+        }
+        .cloud {
+            position: absolute; top: 20%; left: -200px;
+            width: 200px; height: auto;
+            opacity: 0.8;
+            animation: moveClouds 60s linear infinite;
+        }
+        .cloud:nth-child(2) { top: 40%; animation-duration: 80s; }
+        .cloud:nth-child(3) { top: 60%; animation-duration: 100s; }
+        @keyframes moveClouds {
+            from { transform: translateX(-200px); }
+            to { transform: translateX(110vw); }
+        }
+
+        #stars-container {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0; transition: opacity 1.5s ease;
         }
         
         @keyframes twinkle { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
@@ -70,14 +146,22 @@
             animation: twinkle 3s ease-in-out infinite;
         }
         
-        #content {
-            font-family: 'Russo One', sans-serif; position: relative;
-            z-index: 1; color: white; text-align: center;
+        #content {␍␊
+            font-family: 'Russo One', sans-serif; position: relative;␍␊
+            z-index: 1; color: white; text-align: center;␍␊
             padding: 10vh 5vw;
             text-shadow: 
-                -2px -2px 0 #000, 2px -2px 0 #000,
-                -2px 2px 0 #000, 2px 2px 0 #000;
-        }
+                -2px -2px 0 #000, 2px -2px 0 #000,␍␊
+                -2px 2px 0 #000, 2px 2px 0 #000;␍␊
+        }␍␊
+        #content {␊
+            font-family: 'Russo One', sans-serif; position: relative;␊
+            z-index: 1; color: white; text-align: center;␊
+            padding: calc(10vh + 60px) 5vw 10vh;
+            text-shadow:
+                -2px -2px 0 #000, 2px -2px 0 #000,␊
+                -2px 2px 0 #000, 2px 2px 0 #000;␊
+        }␊
         
         .section {
             box-sizing: border-box;
@@ -86,6 +170,18 @@
             transform: translateY(50px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
             display: flex; flex-direction: column; align-items: center;
+        }
+        .section {
+            box-sizing: border-box;
+            padding: 25px 35px; margin: 0 auto 80vh auto;
+            max-width: 750px; opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            display: flex; flex-direction: column; align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .section.is-visible { opacity: 1; transform: translateY(0); }
         .section:last-child { margin-bottom: 20vh; }
@@ -116,6 +212,9 @@
         .price-card { padding: 15px; min-width: 200px; }
         strong, .highlight { color: var(--brand-yellow); }
         a { color: var(--brand-yellow); text-decoration: none; }
+        strong, .highlight { color: var(--brand-yellow); }
+        a { color: var(--brand-yellow); text-decoration: none; transition: color 0.3s ease; }
+        a:hover { color: white; }
 
         .service-info {
             margin-top: 40px;
@@ -141,29 +240,7 @@
             margin-bottom: 15px;
         }
         .service-info li::before {
-            content: '▶';
-            color: var(--brand-yellow);
-            position: absolute;
-            left: 0;
-            top: 2px;
-            font-size: 0.8em;
-        }
-        
-        .donkey-assistant {
-            position: fixed;
-            bottom: 20px;
-            display: flex;
-            align-items: flex-end;
-            z-index: 100;
-            transition: left 0.8s ease-in-out, right 0.8s ease-in-out;
-        }
-        .donkey-assistant img {
-            width: 250px; height: auto;
-            transition: transform 0.8s ease-in-out;
-        }
-        
-        .donkey-right { right: 20px; left: auto; flex-direction: row; }
-        .donkey-right img { transform: scaleX(1); }
+@@ -167,75 +218,92 @@
         .donkey-right .speech-bubble { margin-right: -20px; }
         .donkey-right .speech-bubble::after { right: 35px; left: auto; }
 
@@ -204,6 +281,23 @@
 
             .section { max-width: 90%; padding-left: 15px; padding-right: 15px; }
         }
+        @media (max-width: 600px) {
+            /* ИСПРАВЛЕНО: Добавляем отступ снизу, чтобы текст не заезжал под ослика */
+            #content {
+                padding-bottom: 200px;
+            }
+            #site-header nav { flex-wrap: wrap; gap: 10px; }
+            #site-header a { font-size: 0.9em; padding: 5px 0; }
+
+            .donkey-assistant { bottom: 10px; }
+            .donkey-right { right: 10px; }
+            .donkey-left { left: 10px; }
+            .donkey-assistant img { width: 150px; }
+            .speech-bubble { margin-bottom: 80px; max-width: 190px; padding: 12px 15px; }
+            .speech-bubble p { font-size: 0.9em; }
+
+            .section { max-width: 90%; padding-left: 15px; padding-right: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -213,6 +307,29 @@
         <img src="ishakfly1.png" id="ishak-fly" alt="Летающий ишак">
         <div id="stars-container"></div>
         <div id="moon" class="celestial-body"></div>
+    </div>
+    <body>
+        <header id="site-header">
+            <nav>
+                <a href="#intro">Главная</a>
+                <a href="#rental">Аренда</a>
+                <a href="#buyout">Выкуп</a>
+                <a href="#specs">Характеристики</a>
+                <a href="#contact">Контакты</a>
+            </nav>
+        </header>
+        <div id="background-container"></div>
+    <div id="night-overlay"></div>
+    <div id="sky-elements">
+        <div id="clouds-container">
+            <img src="cloud1.png" class="cloud" alt="Облако 1">
+            <img src="cloud2.png" class="cloud" alt="Облако 2">
+            <img src="cloud3.png" class="cloud" alt="Облако 3">
+        </div>
+        <div id="stars-container"></div>
+        <div id="sun" class="celestial-body"></div>
+        <div id="moon" class="celestial-body"></div>
+        <img src="ishakfly1.png" id="ishak-fly" alt="Летающий ишак">
     </div>
 
     <div id="content">
@@ -239,45 +356,7 @@
                 <li>2 АКБ с запасом хода ~90км</li>
                 <li>Багажник для термокороба</li>
                 <li>Держатель для телефона и зеркала</li>
-                <li>Сигнализация, защита от влаги</li>
-            </ul>
-            <p><strong>Monster Wenbox</strong> развивает скорость <strong>60 км/ч</strong>, чтобы точно успеть забрать большие кэфы.</p>
-        </div>
-        
-        <div class="section" id="rental">
-            <h2>Тарифы на аренду</h2>
-            <p class="highlight">Без залога при аренде от 2-х недель!</p>
-            <div class="price-grid">
-                <div class="price-card"><h3>1 неделя</h3><p>4000₽ + <span class="highlight">залог 5000₽</span></p></div>
-                <div class="price-card"><h3>2 недели</h3><p class="highlight">7500₽</p></div>
-                <div class="price-card"><h3>1 месяц</h3><p class="highlight">14500₽</p><p>(~483₽ в день)</p></div>
-            </div>
-        </div>
-
-        <div class="section" id="buyout"><h2>Выкуп (Рассрочка)</h2><p>Доставим и соберем новый Monster Wenbox W-21. В комплекте багажник, корзинка, держатель для телефона с зарядкой и документы.</p><div class="price-grid"><div><h3>Monster + 1 АКБ</h3><p>3 месяца: <span class="highlight">620₽/день</span></p><p>4 месяца: <span class="highlight">520₽/день</span></p></div><div><h3>Monster + 2 АКБ</h3><p>3 месяца: <span class="highlight">920₽/день</span></p><p>4 месяца: <span class="highlight">790₽/день</span></p></div></div></div>
-        
-        <div class="section" id="specs"><h2>Характеристики</h2><ul>
-            <li><strong>Мощность:</strong> 1000 Ватт (маркировка 240 Вт)</li>
-            <li><strong>Скорость:</strong> 60 км/ч</li>
-            <li><strong>Запас хода:</strong> ~90 км</li>
-            <li><strong>Документы:</strong> Полный комплект (паспорт, договор аренды)</li>
-        </ul></div>
-        
-        <div class="section" id="address"><h2>Наши адреса</h2><div class="price-grid"><div><h3>м. Аэропорт</h3><p>Ул. Часовая 16с19</p></div><div><h3>м. Савеловская</h3><p>Ул. Бутырская 53к1</p></div></div></div>
-        
-        <div class="section" id="contact">
-            <h2>Как получить вел?</h2>
-            <ul style="text-align: center;">
-                <li>Напишите <span class="highlight">«АРЕНДА»</span> в Telegram.</li>
-                <li>Возьмите паспорт и приезжайте к нам в мастерскую.</li>
-                <li>Подписываем договор и можно ехать!</li>
-            </ul>
-            <p style="font-size: 1.5em; margin-top: 1em;"><a href="https://t.me/ishakrent" target="_blank">@ishakrent</a></p>
-        </div>
-    </div>
-
-    <div class="donkey-assistant" id="donkey-assistant">
-        <div class="speech-bubble">
+@@ -281,68 +349,87 @@
             <p id="donkey-text"></p>
         </div>
         <img src="Whisk_12455d7cfa-Photoroom.png" alt="Машущий ослик-помощник">
@@ -321,6 +400,43 @@
             ishakFly.style.opacity = Math.max(0, (scrollPercent - 0.3) / 0.7);
         }
         window.addEventListener('scroll', animateScene);
+        const sun = document.getElementById('sun');
+        const cloudsContainer = document.getElementById('clouds-container');
+        const CYCLE_DURATION = 60000; // полный цикл день/ночь в мс
+
+        function updateScene() {
+            const now = Date.now();
+            const cyclePos = (now % CYCLE_DURATION) / CYCLE_DURATION; // 0..1
+            if (cyclePos < 0.5) {
+                const p = cyclePos / 0.5; // день -> ночь
+                nightOverlay.style.opacity = p;
+                sun.style.opacity = 1 - p;
+                sun.style.left = (10 + p * 80) + 'vw';
+                sun.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
+                moon.style.opacity = 0;
+                starsContainer.style.opacity = 0;
+                cloudsContainer.style.opacity = 1 - p;
+            } else {
+                const p = (cyclePos - 0.5) / 0.5; // ночь -> день
+                nightOverlay.style.opacity = 1 - p;
+                moon.style.opacity = 1 - p;
+                moon.style.left = (10 + p * 80) + 'vw';
+                moon.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
+                starsContainer.style.opacity = 1 - p;
+                sun.style.opacity = p;
+                sun.style.left = (10 + p * 80) + 'vw';
+                sun.style.top = (80 - Math.sin(p * Math.PI) * 60) + 'vh';
+                cloudsContainer.style.opacity = p;
+            }
+
+            const flight = cyclePos;
+            ishakFly.style.left = (-20 + flight * 140) + 'vw';
+            ishakFly.style.top = (20 + Math.sin(flight * Math.PI * 2) * 5) + 'vh';
+            ishakFly.style.opacity = 0.8;
+
+            requestAnimationFrame(updateScene);
+        }
+        updateScene();
         
         // --- Скрипт для интерактивного ослика-гида ---
         const donkeyAssistant = document.getElementById('donkey-assistant');
@@ -346,12 +462,7 @@
                 if (entry.isIntersecting && id !== currentSectionId) {
                     currentSectionId = id;
                     const config = donkeyDialogs[id];
-                    
-                    if (config) {
-                        donkeyAssistant.classList.remove('donkey-left', 'donkey-right');
-                        donkeyAssistant.classList.add(config.position === 'left' ? 'donkey-left' : 'donkey-right');
-
-                        clearTimeout(textChangeTimeout);
+@@ -355,32 +442,31 @@
                         donkeyText.style.opacity = '0';
                         textChangeTimeout = setTimeout(() => {
                             donkeyText.innerText = config.text;
@@ -378,6 +489,12 @@
         });
 
         animateScene();
+        const initialConfig = donkeyDialogs['intro'];
+        donkeyAssistant.classList.add(initialConfig.position === 'left' ? 'donkey-left' : 'donkey-right');
+        donkeyText.innerText = initialConfig.text;
+    </script>
+</body>
+</html>
         const initialConfig = donkeyDialogs['intro'];
         donkeyAssistant.classList.add(initialConfig.position === 'left' ? 'donkey-left' : 'donkey-right');
         donkeyText.innerText = initialConfig.text;
